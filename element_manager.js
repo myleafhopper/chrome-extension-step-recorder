@@ -1,31 +1,32 @@
 
+let characters = '';
+
+ if (document.addEventListener) {
+
+    document.addEventListener('keydown', (event) => {
+        evaluateKeyPress(event);
+    });
+} 
+
 if (document.addEventListener) {
 
     document.addEventListener('mousedown', (event) => {
-        evaluateEvent(event);
-    });
-
-} else if (document.addEventListener) {
-
-    document.addEventListener('click', (event) => {
-        evaluateEvent(event);
-    });
-
-} else if (document.addEventListener) {
-
-    document.addEventListener('onclick', (event) => {
-        evaluateEvent(event);
-    });
-
-} else if (document.attachEvent) {
-
-    document.attachEvent('onclick', () => {
-        evaluateEvent(event);
+        evaluateMouseClick(event);
     });
 }
 
-function evaluateEvent(event) {
+function evaluateKeyPress(event) {
 
+    if (event.keyCode == 9) {
+        console.log(characters);
+    } else {
+        characters = characters + event.key;
+    }
+}
+
+function evaluateMouseClick(event) {
+
+    characters = '';
     let target = event.target || event.srcElement;
     let xpath = getPathTo(target);
     console.log(xpath);
