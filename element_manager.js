@@ -17,9 +17,9 @@ if (document.addEventListener) {
 
 function evaluateKeyPress(event) {
 
-    const charList = 'abcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+=,.<>?/;:"[]{}|\\\'';
+    const list = 'abcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+=,.<>?/;:"[]{}|\\\'';
     const key = event.key.toLowerCase();
-    if (charList.indexOf(key) === -1) return;
+    if (list.indexOf(key) === -1) return;
     characters = characters + event.key;
 }
 
