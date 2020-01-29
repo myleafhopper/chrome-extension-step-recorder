@@ -1,12 +1,12 @@
 
 let characters = '';
 
- if (document.addEventListener) {
+if (document.addEventListener) {
 
     document.addEventListener('keydown', (event) => {
         evaluateKeyPress(event);
     });
-} 
+}
 
 if (document.addEventListener) {
 
@@ -17,16 +17,20 @@ if (document.addEventListener) {
 
 function evaluateKeyPress(event) {
 
-    if (event.keyCode == 9) {
-        console.log(characters);
-    } else {
-        characters = characters + event.key;
-    }
+    const charList = 'abcdefghijklmnopqrstuvwxyz0123456789`~!@#$%^&*()_-+=,.<>?/;:"[]{}|\\\'';
+    const key = event.key.toLowerCase();
+    if (charList.indexOf(key) === -1) return;
+    characters = characters + event.key;
 }
 
 function evaluateMouseClick(event) {
 
-    characters = '';
+    if (characters.length > 0) {
+        
+        console.log(characters);
+        characters = '';
+    }
+
     let target = event.target || event.srcElement;
     let xpath = getPathTo(target);
     console.log(xpath);
