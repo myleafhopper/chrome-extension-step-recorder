@@ -31,6 +31,7 @@ function evaluateMouseClick(event) {
         characters = '';
     }
 
+    if (event.which !== 1) { return; }
     let target = event.target || event.srcElement;
     let xpath = getPathTo(target);
     console.log(xpath);
