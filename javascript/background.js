@@ -18,8 +18,12 @@ contextMenus.getElementLocators =
 function createContextMenuHandler(info, tab) {
 
     if (info.menuItemId === contextMenus.getElementLocators) {
-        chrome.tabs.executeScript({ file: 'element_manager.js' });
+        chrome.tabs.executeScript({ file: 'javascript/print_script.js' });
     }
 }
 
 chrome.contextMenus.onClicked.addListener(createContextMenuHandler);
+
+function meh() {
+    console.log('meh');
+}

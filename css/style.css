@@ -1,9 +1,9 @@
 body {
-    width: 200px;
-    height: 80px;
+    width: 300px;
+    height: 100%;
 }
 
-.btn-group button {
+.button-group button {
     background-color: #ffffff; 
     border: 1px solid #cfcdcc; 
     color: #454545;
@@ -14,7 +14,7 @@ body {
     margin-bottom: 10px;
 }
 
-.btn-group button:hover {
+.button-group button:hover {
     color: #ffffff;
     background-color: #4786e3;
 }
@@ -31,4 +31,12 @@ body {
 
 .stop-record {
     background-image: url(icons/times.svg);
+}
+
+.show-footer {
+    display: block;
+}
+
+.hide-footer {
+    display: none;
 }
