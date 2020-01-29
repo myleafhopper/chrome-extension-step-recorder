@@ -4,15 +4,19 @@ document.getElementById("footer-toggle").addEventListener("click", toggleFooter)
 function toggleFooter() {
 
     let footer = document.getElementById('footer');
+    switchClasses(footer, "hide-footer", "show-footer");
+}
 
-    if (footer.classList.contains("hide-footer")) {
+function switchClasses(element, class1, class2) {
 
-        footer.classList.remove("hide-footer");
-        footer.classList.add("show-footer");
-        
+    if (element.classList.contains(class1)) {
+
+        footer.classList.remove(class1);
+        footer.classList.add(class2);
+
     } else {
-        
-        footer.classList.remove("show-footer");
-        footer.classList.add("hide-footer");
+
+        footer.classList.remove(class2);
+        footer.classList.add(class1);
     }
 }
