@@ -4,35 +4,52 @@
 <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 
 <body>
 
-    <div class="button-group">
+    <button class="button-style" id="start-record">
+        <i class="glyphicon glyphicon-record icon"></i>Start Recording</button>
 
-        <button class="start-record" id="start-record">Start Recording</button>
-        <button class="stop-record" id="stop-record">Stop Recording</button>
+    <button class="button-style" id="pause-record">
+        <i class="glyphicon glyphicon-pause icon"></i>Pause Recording</button>
 
-        <div class="divider"></div>
+    <button class="button-style" id="stop-record">
+        <i class="glyphicon glyphicon-stop icon"></i>Stop Recording</button>
 
-        <button class="show-block" id="footer-toggle">Credits</button>
+    <!-- <div class="divider"></div>
 
-    </div>
+    <button class="button-style" id="start-record">
+        <i class="glyphicon glyphicon-record icon"></i>Verify Element Visibility</button>
 
-    <div class='hide-footer' id='footer'>
+    <button class="button-style" id="pause-record">
+        <i class="glyphicon glyphicon-pause icon"></i>Wait For Element</button>
+
+    <button class="button-style" id="stop-record">
+        <i class="glyphicon glyphicon-stop icon"></i>Wait</button> -->
+
+    <div class="divider"></div>
+
+    <button class="button-style" id="credits-toggle">
+        <i class="glyphicon glyphicon-option-vertical icon"></i>Credits</button>
+
+    <div class='hide-credits' id='credits'>
         <ul>
-            <li>Author: MyLeafHopper</li>
-            <li>Version: 1.0</li>
-            <li>Attributions:</li>
-            <ul>
-                <li><a target="_blank" href="https://icons8.com/icons/set/record">Record icon</a> icon by <a
-                    target="_blank" href="https://icons8.com">Icons8</a></li>
-                <li><a target="_blank" href="https://icons8.com/icons/set/no-record">No Record icon</a> icon by <a
-                        target="_blank" href="https://icons8.com">Icons8</a></li>
-            </ul>
+            <li><b>Author:</b> Scrumfluence</li>
+            <li><b>Attributions:</b> Icons by <a href="https://icons8.com">Icons8</a></li>
+            <li><b>Github Contributors:</b>
+                <ul>
+                    <li>myleafhopper</li>
+                    <li>itbymac</li>
+                    <li>zahia2012</li>
+                </ul>
+            </li>
         </ul>
     </div>
+
     <script src="javascript/user_actions.js"></script>
+    <!-- <script src="javascript/element_manager.js"></script> -->
 
 </body>
 

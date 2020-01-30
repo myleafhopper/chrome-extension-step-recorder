@@ -1,22 +1,37 @@
 
-document.getElementById("footer-toggle").addEventListener("click", toggleFooter);
+document.getElementById("credits-toggle").addEventListener("click", toggleCredits);
 
-function toggleFooter() {
+function toggleCredits() {
 
-    let footer = document.getElementById('footer');
-    switchClasses(footer, "hide-footer", "show-footer");
+    let credits = document.getElementById('credits');
+    switchClasses(credits, "hide-credits", "show-credits");
 }
 
 function switchClasses(element, class1, class2) {
 
     if (element.classList.contains(class1)) {
 
-        footer.classList.remove(class1);
-        footer.classList.add(class2);
+        element.classList.remove(class1);
+        element.classList.add(class2);
 
     } else {
 
-        footer.classList.remove(class2);
-        footer.classList.add(class1);
+        element.classList.remove(class2);
+        element.classList.add(class1);
     }
 }
+
+//-------------------------------------
+
+const port = chrome.runtime.connect({ name: 'sync' });
+port.onMessage.addListener(function (message, sender) {
+    console.log(message.status);
+});
+
+document.getElementById("start-record").addEventListener("click", () => {
+    port.postMessage({action:"start-record"});
+});
+
+document.getElementById("stop-record").addEventListener("click", () => {
+    port.postMessage({action:"stop-record"});
+});

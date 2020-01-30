@@ -1,22 +1,38 @@
 body {
-    width: 300px;
+    width: 250px;
     height: 100%;
+    
 }
 
-.button-group button {
-    background-color: #ffffff; 
-    border: 1px solid #cfcdcc; 
+.button-style {
+    background-color: #ffffff;
+    border: none;
     color: #454545;
     cursor: pointer;
     width: 100%;
     height: 30px;
     display: block;
     margin-bottom: 5px;
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
-.button-group button:hover {
+.button-style:hover {
     color: #ffffff;
     background-color: #4786e3;
+}
+
+.icon {
+    margin-right: 15px;
+}
+
+.start-record {
+    background-image: url(../icons/youtube.svg);
+}
+
+.stop-record {
+    background-image: url(../icons/times.svg);
 }
 
 .divider {
@@ -25,24 +41,10 @@ body {
     border-bottom: 1px solid #cfcdcc;
 }
 
-.icon {
-    background-repeat: no-repeat;
-    background-size: 25px 25px;
-    background-origin: content-box, padding-box;
-}
-
-.start-record {
-    background-image: url(icons/youtube.svg);
-}
-
-.stop-record {
-    background-image: url(icons/times.svg);
-}
-
-.show-footer {
+.show-credits {
     display: block;
 }
 
-.hide-footer {
+.hide-credits {
     display: none;
 }

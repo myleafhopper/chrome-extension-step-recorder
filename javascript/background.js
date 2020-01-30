@@ -24,6 +24,16 @@ function createContextMenuHandler(info, tab) {
 
 chrome.contextMenus.onClicked.addListener(createContextMenuHandler);
 
-function meh() {
-    console.log('meh');
-}
+//-------------------------
+
+chrome.runtime.onConnect.addListener(function (port) {
+
+    port.onMessage.addListener(function (message) {
+
+        chrome.tabs.executeScript({
+            code: 'let config = ' + JSON.stringify({ message })
+        }, function () {
+            chrome.tabs.executeScript({ file: 'javascript/element_manager.js' });
+        });
+    });
+});
