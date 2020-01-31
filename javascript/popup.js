@@ -66,3 +66,9 @@ document.getElementById("stop-record").addEventListener("click", () => {
         });
     });
 });
+
+//-------------------------------------
+
+document.getElementById("author").addEventListener("click", () => {
+    chrome.tabs.create({ url: document.getElementById("author").getAttribute('href') });
+});

@@ -4,7 +4,7 @@ let contextMenus = {};
 contextMenus.getElementLocators =
     chrome.contextMenus.create(
         {
-            title: 'Get Element Locators',
+            title: 'Analyze DOM For Element IDs',
             contexts: ['all']
         },
         () => {
@@ -18,13 +18,13 @@ contextMenus.getElementLocators =
 function createContextMenuHandler(info, tab) {
 
     if (info.menuItemId === contextMenus.getElementLocators) {
-        chrome.tabs.executeScript({ file: 'javascript/print_script.js' });
+        chrome.tabs.executeScript({ file: 'javascript/dom_analyzer.js' });
     }
 }
 
 chrome.contextMenus.onClicked.addListener(createContextMenuHandler);
 
-//-------------------------
+//----------------------------------------------------------------------
 
 chrome.runtime.onConnect.addListener(function (port) {
 
