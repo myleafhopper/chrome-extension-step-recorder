@@ -17,14 +17,6 @@
         } else if (message.action === 'stop-record') {
 
             console.log('Recording Stopped...');
-            
-            chrome.storage.local.get(null, function (result) {
-
-                for (let key in result) {
-                    console.log('\n', key + ': ' + result[key]);
-                    chrome.storage.local.remove(key);
-                }
-            });
         }
     }
 
@@ -69,7 +61,7 @@
     function getPathTo(element) {
 
         if (element.id !== '') {
-            return '//*[@id="' + element.id + '"]';
+            return "//*[@id='" + element.id + "']";
         } else if (element === document.body) {
             return element.tagName;
         }

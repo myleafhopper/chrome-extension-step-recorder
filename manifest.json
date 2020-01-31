@@ -6,7 +6,8 @@
     "permissions": [
         "activeTab",
         "contextMenus",
-        "storage"
+        "storage",
+        "downloads"
     ],
     "background": {
         "persistent": true,

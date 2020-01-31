@@ -38,13 +38,31 @@ port.onMessage.addListener(function (message, sender) {
 });
 
 document.getElementById("start-page-analysis").addEventListener("click", () => {
-    port.postMessage({action: "start-page-analysis"});
+    port.postMessage({ action: "start-page-analysis" });
 });
 
 document.getElementById("start-record").addEventListener("click", () => {
-    port.postMessage({action: "start-record"});
+    port.postMessage({ action: "start-record" });
 });
 
 document.getElementById("stop-record").addEventListener("click", () => {
-    port.postMessage({action: "stop-record"});
+
+    port.postMessage({ action: "stop-record" });
+
+    chrome.storage.local.get(null, function (result) {
+
+        let settings = {
+            url: 'data:application/json;base64,' + btoa(JSON.stringify(result)),
+            filename: 'recorded_script.json'
+        };
+
+        chrome.downloads.download(settings, function () {
+
+            for (let key in result) {
+                console.log('\n', key + ': ' + result[key]);
+                chrome.storage.local.remove(key);
+            }
+
+        });
+    });
 });
