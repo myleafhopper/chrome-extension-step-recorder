@@ -11,10 +11,20 @@
         } else if (message.action === 'start-record') {
 
             console.log('Recording Started...');
+            let step_counter = { 'step_count': 1 };
+            chrome.storage.local.set(step_counter);
 
         } else if (message.action === 'stop-record') {
 
             console.log('Recording Stopped...');
+            
+            chrome.storage.local.get(null, function (result) {
+
+                for (let key in result) {
+                    console.log('\n', key + ': ' + result[key]);
+                    chrome.storage.local.remove(key);
+                }
+            });
         }
     }
 
@@ -37,7 +47,23 @@
         if (event.which !== 1) { return; }
         let target = event.target || event.srcElement;
         let xpath = getPathTo(target);
-        console.log(xpath);
+
+        chrome.storage.local.get('step_count', function (result) {
+
+            let step_identifier = 'step_' + result.step_count;
+            let step = {};
+            step[step_identifier] = {
+                locator: xpath,
+                type: 'xpath',
+                time: getTimeStamp(),
+                data: ''
+            };
+
+            chrome.storage.local.set(step);
+
+            let step_counter = { 'step_count': (result.step_count + 1) };
+            chrome.storage.local.set(step_counter);
+        });
     }
 
     function getPathTo(element) {
@@ -63,6 +89,12 @@
                 nodeIndex++;
             }
         }
+    }
+
+    function getTimeStamp() {
+
+        const date = new Date();
+        return date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     }
 
     recordHandler();
