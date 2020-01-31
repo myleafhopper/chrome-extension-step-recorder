@@ -30,8 +30,10 @@ chrome.runtime.onConnect.addListener(function (port) {
 
     port.onMessage.addListener(function (message) {
 
+        let variable = message.action === 'start-record'? 'let ' : '';
+
         chrome.tabs.executeScript({
-            code: 'let config = ' + JSON.stringify({ message })
+            code: variable + 'message = ' + JSON.stringify(message)
         }, function () {
             chrome.tabs.executeScript({ file: 'javascript/element_manager.js' });
         });

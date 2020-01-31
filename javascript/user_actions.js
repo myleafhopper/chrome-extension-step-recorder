@@ -4,7 +4,16 @@ document.getElementById("credits-toggle").addEventListener("click", toggleCredit
 function toggleCredits() {
 
     let credits = document.getElementById('credits');
-    switchClasses(credits, "hide-credits", "show-credits");
+    switchClasses(credits, "hide", "show");
+}
+
+function toggleStartPauseButton() {
+
+    let startRecord = document.getElementById('start-record');
+    switchClasses(startRecord, "hide", "show");
+
+    let pauseRecord = document.getElementById('pause-record');
+    switchClasses(pauseRecord, "hide", "show");
 }
 
 function switchClasses(element, class1, class2) {

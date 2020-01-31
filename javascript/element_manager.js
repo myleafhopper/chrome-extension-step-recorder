@@ -3,14 +3,12 @@
 
     function recordHandler() {
 
-        console.log(config);
-
-        if (config.message.action === 'start-record') {
+        if (message.action === 'start-record') {
 
             document.addEventListener('keydown', evaluateKeyPress);
             document.addEventListener('mousedown', evaluateMouseClick);
 
-        } else if (config.message.action === 'stop-record') {
+        } else if (message.action === 'stop-record') {
 
             document.removeEventListener('keydown', evaluateKeyPress);
             document.removeEventListener('mousedown', evaluateMouseClick);

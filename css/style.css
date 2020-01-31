@@ -41,10 +41,10 @@ body {
     border-bottom: 1px solid #cfcdcc;
 }
 
-.show-credits {
+.show {
     display: block;
 }
 
-.hide-credits {
+.hide {
     display: none;
 }
