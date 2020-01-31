@@ -1,7 +1,6 @@
 body {
     width: 250px;
     height: 100%;
-    
 }
 
 .button-style {
@@ -25,14 +24,6 @@ body {
 
 .icon {
     margin-right: 15px;
-}
-
-.start-record {
-    background-image: url(../icons/youtube.svg);
-}
-
-.stop-record {
-    background-image: url(../icons/times.svg);
 }
 
 .divider {
