@@ -3,15 +3,18 @@
 
     function recordHandler() {
 
-        if (message.action === 'start-record') {
+        if (message.action === 'start-page-analysis') {
 
             document.addEventListener('keydown', evaluateKeyPress);
             document.addEventListener('mousedown', evaluateMouseClick);
 
+        } else if (message.action === 'start-record') {
+
+            console.log('Recording Started...');
+
         } else if (message.action === 'stop-record') {
 
-            document.removeEventListener('keydown', evaluateKeyPress);
-            document.removeEventListener('mousedown', evaluateMouseClick);
+            console.log('Recording Stopped...');
         }
     }
 

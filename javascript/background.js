@@ -30,7 +30,7 @@ chrome.runtime.onConnect.addListener(function (port) {
 
     port.onMessage.addListener(function (message) {
 
-        let variable = message.action === 'start-record'? 'let ' : '';
+        let variable = message.action === 'start-page-analysis'? 'let ' : '';
 
         chrome.tabs.executeScript({
             code: variable + 'message = ' + JSON.stringify(message)

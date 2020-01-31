@@ -37,10 +37,14 @@ port.onMessage.addListener(function (message, sender) {
     console.log(message.status);
 });
 
+document.getElementById("start-page-analysis").addEventListener("click", () => {
+    port.postMessage({action: "start-page-analysis"});
+});
+
 document.getElementById("start-record").addEventListener("click", () => {
-    port.postMessage({action:"start-record"});
+    port.postMessage({action: "start-record"});
 });
 
 document.getElementById("stop-record").addEventListener("click", () => {
-    port.postMessage({action:"stop-record"});
+    port.postMessage({action: "stop-record"});
 });
