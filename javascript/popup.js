@@ -58,9 +58,10 @@ document.getElementById("start-record").addEventListener("click", () => {
         file_name = 'script (' + dateStamp + ') (' + timeStamp + ').json';
     }
 
-    port.postMessage({ 
+    port.postMessage({
         action: "start-record",
-        file_name: file_name
+        file_name: file_name,
+        value: '',
     });
 });
 
@@ -88,31 +89,29 @@ document.getElementById("stop-record").addEventListener("click", () => {
 //-------------------------------------
 
 document.getElementById("wait").addEventListener("click", () => {
-    
-    chrome.storage.local.get(null, (result) => {
 
-        let description = 'Step ' + result.settings.step_count + ' - Wait for ' + target.tagName + ' element';
-        let step_identifier = 'step_' + result.settings.step_count;
-        let step = {};
+    let seconds = 1;
 
-        step[step_identifier] = {
-            description: description,
-            locator: xpath,
-            type: 'xpath',
-            time: getTimeStamp(),
-            data: ''
-        };
+    try {
 
-        console.log(description);
-        chrome.storage.local.set(step);
-        let step_counter = { 'step_count': (result.settings.step_count + 1) };
-        chrome.storage.local.set(step_counter);
+        let value = Number(data);
+        seconds = value > 0 ? value : seconds;
+
+    } catch (error) {
+        console.log('\n*** Wait time provided was not valid. ***\n');
+    }
+
+    data = '';
+
+    port.postMessage({
+        action: "wait",
+        value: seconds
     });
 });
 
 //-------------------------------------
 
-let data;
+let data = '';
 
 document.getElementById("data").addEventListener("change", (element) => {
     data = element.target.value;

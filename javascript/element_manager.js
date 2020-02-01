@@ -13,22 +13,32 @@
 
         } else if (message.action === 'start-record') {
 
+            chrome.storage.local.set({
+                'settings': {
+                    'step_count': 1,
+                    'file_name': message.file_name,
+                    'value': ''
+                }
+            });
+
             console.log(dash.repeat(30));
             console.log('Recording Started...');
             console.log(dash.repeat(30));
-
-            chrome.storage.local.set({ 
-                'settings': {
-                    'step_count': 1,
-                    'file_name': message.file_name
-                }
-            });
 
         } else if (message.action === 'stop-record') {
 
             console.log(dash.repeat(30));
             console.log('Recording Stopped...');
             console.log(dash.repeat(30));
+
+        } else if (message.action === 'wait') {
+
+            try {
+                seconds = Number(data);
+                seconds = seconds > 0 ? seconds : 1;
+            } catch (error) {
+                alert('Wait time provided was not valid.');
+            }
         }
     }
 
@@ -49,35 +59,52 @@
         }
 
         if (event.which !== 1) { return; }
-        let target = event.target || event.srcElement;
-        let xpath = getPathTo(target);
+        let element = event.target || event.srcElement;
 
         chrome.storage.local.get(null, (result) => {
 
-            let description = 'Step ' + result.settings.step_count + ' - Click the target ' + target.tagName + ' element';
-            let step_identifier = 'step_' + result.settings.step_count;
-            let step = {};
-
-            step[step_identifier] = {
-                description: description,
-                locator: xpath,
-                type: 'xpath',
-                time: getTimeStamp(),
-                data: ''
-            };
-
-            console.log(description);
-            chrome.storage.local.set(step);
-            chrome.storage.local.set({ 
-                'settings': {
-                    'step_count': result.settings.step_count + 1,
-                    'file_name': result.settings.file_name
-                }
-            });
+            let step = getStep('click', result, element);
+            saveStep(step, result);
         });
     }
 
-    function getPathTo(element) {
+    function getStep(stepType, result = null, element = null) {
+
+        let description = 'Step ' + result.settings.step_count + ' - ';
+        let xpath = '';
+
+        if (stepType == 'click') {
+
+            description = description + 'Click the ' + element.tagName + ' element';
+            xpath = getXpath(element);
+        }
+
+        let step = {};
+
+        step['step_' + result.settings.step_count] = {
+            description: description,
+            locator: xpath,
+            time: getTimeStamp(),
+            data: ''
+        };
+
+        console.log(description);
+        return step;
+    }
+
+    function saveStep(step, result) {
+
+        chrome.storage.local.set(step);
+        chrome.storage.local.set({
+            'settings': {
+                'step_count': result.settings.step_count + 1,
+                'file_name': result.settings.file_name,
+                'value': ''
+            }
+        });
+    }
+
+    function getXpath(element) {
 
         if (element.id !== '') {
             return "//*[@id='" + element.id + "']";
@@ -93,7 +120,7 @@
             let sibling = siblings[i];
 
             if (sibling === element) {
-                return getPathTo(element.parentNode) + '/' + element.tagName + '[' + (nodeIndex + 1) + ']';
+                return getXpath(element.parentNode) + '/' + element.tagName + '[' + (nodeIndex + 1) + ']';
             }
 
             if (sibling.nodeType === 1 && sibling.tagName === element.tagName) {
