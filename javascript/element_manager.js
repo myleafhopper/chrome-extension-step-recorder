@@ -9,21 +9,26 @@
 
             document.addEventListener('keydown', evaluateKeyPress);
             document.addEventListener('mousedown', evaluateMouseClick);
+            console.log('---> Page Analyzer Activated <---');
 
         } else if (message.action === 'start-record') {
 
             console.log(dash.repeat(30));
             console.log('Recording Started...');
-            console.log(dash.repeat(30), '\n');
+            console.log(dash.repeat(30));
 
-            let step_counter = { 'step_count': 1 };
-            chrome.storage.local.set(step_counter);
+            chrome.storage.local.set({ 
+                'settings': {
+                    'step_count': 1,
+                    'file_name': message.file_name
+                }
+            });
 
         } else if (message.action === 'stop-record') {
 
             console.log(dash.repeat(30));
             console.log('Recording Stopped...');
-            console.log(dash.repeat(30), '\n');
+            console.log(dash.repeat(30));
         }
     }
 
@@ -47,10 +52,10 @@
         let target = event.target || event.srcElement;
         let xpath = getPathTo(target);
 
-        chrome.storage.local.get('step_count', (result) => {
+        chrome.storage.local.get(null, (result) => {
 
-            let description = 'Step ' + result.step_count + ' - Click the target ' + target.tagName + ' element';
-            let step_identifier = 'step_' + result.step_count;
+            let description = 'Step ' + result.settings.step_count + ' - Click the target ' + target.tagName + ' element';
+            let step_identifier = 'step_' + result.settings.step_count;
             let step = {};
 
             step[step_identifier] = {
@@ -63,8 +68,12 @@
 
             console.log(description);
             chrome.storage.local.set(step);
-            let step_counter = { 'step_count': (result.step_count + 1) };
-            chrome.storage.local.set(step_counter);
+            chrome.storage.local.set({ 
+                'settings': {
+                    'step_count': result.settings.step_count + 1,
+                    'file_name': result.settings.file_name
+                }
+            });
         });
     }
 

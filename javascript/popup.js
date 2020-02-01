@@ -42,7 +42,26 @@ document.getElementById("start-page-analysis").addEventListener("click", () => {
 });
 
 document.getElementById("start-record").addEventListener("click", () => {
-    port.postMessage({ action: "start-record" });
+
+    let file_name;
+
+    if (data.length > 0) {
+
+        file_name = data + '.json';
+        data = '';
+
+    } else {
+
+        let date = new Date();
+        let dateStamp = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
+        let timeStamp = date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
+        file_name = 'script (' + dateStamp + ') (' + timeStamp + ').json';
+    }
+
+    port.postMessage({ 
+        action: "start-record",
+        file_name: file_name
+    });
 });
 
 document.getElementById("stop-record").addEventListener("click", () => {
@@ -51,13 +70,9 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
     chrome.storage.local.get(null, (result) => {
 
-        const date = new Date();
-        const dateStamp = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
-        const timeStamp = date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
-        const dateTimeStamp = ' (' + dateStamp + ') (' + timeStamp + ')';
         const settings = {
             url: 'data:application/json;base64,' + btoa(JSON.stringify(result)),
-            filename: 'recorded_scripts/script' + dateTimeStamp + '.json'
+            filename: 'recorded_scripts/' + result.settings.file_name
         };
 
         chrome.downloads.download(settings, () => {
@@ -66,9 +81,41 @@ document.getElementById("stop-record").addEventListener("click", () => {
                 console.log('\n', key + ': ' + result[key]);
                 chrome.storage.local.remove(key);
             }
-
         });
     });
+});
+
+//-------------------------------------
+
+document.getElementById("wait").addEventListener("click", () => {
+    
+    chrome.storage.local.get(null, (result) => {
+
+        let description = 'Step ' + result.settings.step_count + ' - Wait for ' + target.tagName + ' element';
+        let step_identifier = 'step_' + result.settings.step_count;
+        let step = {};
+
+        step[step_identifier] = {
+            description: description,
+            locator: xpath,
+            type: 'xpath',
+            time: getTimeStamp(),
+            data: ''
+        };
+
+        console.log(description);
+        chrome.storage.local.set(step);
+        let step_counter = { 'step_count': (result.settings.step_count + 1) };
+        chrome.storage.local.set(step_counter);
+    });
+});
+
+//-------------------------------------
+
+let data;
+
+document.getElementById("data").addEventListener("change", (element) => {
+    data = element.target.value;
 });
 
 //-------------------------------------
