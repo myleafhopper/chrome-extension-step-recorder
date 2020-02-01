@@ -33,7 +33,7 @@ function switchClasses(element, class1, class2) {
 //-------------------------------------
 
 const port = chrome.runtime.connect({ name: 'sync' });
-port.onMessage.addListener(function (message, sender) {
+port.onMessage.addListener((message, sender) => {
     console.log(message.status);
 });
 
@@ -49,14 +49,18 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
     port.postMessage({ action: "stop-record" });
 
-    chrome.storage.local.get(null, function (result) {
+    chrome.storage.local.get(null, (result) => {
 
-        let settings = {
+        const date = new Date();
+        const dateStamp = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
+        const timeStamp = date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
+        const dateTimeStamp = ' (' + dateStamp + ') (' + timeStamp + ')';
+        const settings = {
             url: 'data:application/json;base64,' + btoa(JSON.stringify(result)),
-            filename: 'recorded_script.json'
+            filename: 'recorded_scripts/script' + dateTimeStamp + '.json'
         };
 
-        chrome.downloads.download(settings, function () {
+        chrome.downloads.download(settings, () => {
 
             for (let key in result) {
                 console.log('\n', key + ': ' + result[key]);

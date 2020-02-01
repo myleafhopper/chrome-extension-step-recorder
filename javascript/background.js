@@ -26,9 +26,9 @@ chrome.contextMenus.onClicked.addListener(createContextMenuHandler);
 
 //----------------------------------------------------------------------
 
-chrome.runtime.onConnect.addListener(function (port) {
+chrome.runtime.onConnect.addListener((port) => {
 
-    port.onMessage.addListener(function (message) {
+    port.onMessage.addListener((message) => {
 
         let variable = message.action === 'start-page-analysis'? 'let ' : '';
 

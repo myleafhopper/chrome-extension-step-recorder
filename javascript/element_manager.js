@@ -3,6 +3,8 @@
 
     function recordHandler() {
 
+        let dash = '-';
+
         if (message.action === 'start-page-analysis') {
 
             document.addEventListener('keydown', evaluateKeyPress);
@@ -10,13 +12,18 @@
 
         } else if (message.action === 'start-record') {
 
+            console.log(dash.repeat(30));
             console.log('Recording Started...');
+            console.log(dash.repeat(30), '\n');
+
             let step_counter = { 'step_count': 1 };
             chrome.storage.local.set(step_counter);
 
         } else if (message.action === 'stop-record') {
 
+            console.log(dash.repeat(30));
             console.log('Recording Stopped...');
+            console.log(dash.repeat(30), '\n');
         }
     }
 
@@ -40,19 +47,22 @@
         let target = event.target || event.srcElement;
         let xpath = getPathTo(target);
 
-        chrome.storage.local.get('step_count', function (result) {
+        chrome.storage.local.get('step_count', (result) => {
 
+            let description = 'Step ' + result.step_count + ' - Click the target ' + target.tagName + ' element';
             let step_identifier = 'step_' + result.step_count;
             let step = {};
+
             step[step_identifier] = {
+                description: description,
                 locator: xpath,
                 type: 'xpath',
                 time: getTimeStamp(),
                 data: ''
             };
 
+            console.log(description);
             chrome.storage.local.set(step);
-
             let step_counter = { 'step_count': (result.step_count + 1) };
             chrome.storage.local.set(step_counter);
         });

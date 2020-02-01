@@ -13,8 +13,6 @@ body {
     display: block;
     margin-bottom: 5px;
     text-align: left;
-    padding-left: 20px;
-    padding-right: 20px;
 }
 
 .button-style:hover {
@@ -23,7 +21,8 @@ body {
 }
 
 .icon {
-    margin-right: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .divider {
@@ -38,4 +37,27 @@ body {
 
 .hide {
     display: none;
+}
+
+.textbox-container {
+    display: block;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+
+.textbox-icon {
+    padding-top: 5px;
+    padding-left: 27px;
+    padding-right: 10px;
+}
+
+.textbox {
+    top: 0;
+    left: 0;
+    right: 0;
+    float: right;
+    width: 188px;
+    border-radius: 5px;
+    border: 1px solid #A6A6A6;
+    height: 18px;
 }
