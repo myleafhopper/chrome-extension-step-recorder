@@ -90,17 +90,7 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
 document.getElementById("wait").addEventListener("click", () => {
 
-    let seconds = 1;
-
-    try {
-
-        let value = Number(data);
-        seconds = value > 0 ? value : seconds;
-
-    } catch (error) {
-        console.log('\n*** Wait time provided was not valid. ***\n');
-    }
-
+    let seconds = data;
     data = '';
 
     port.postMessage({

@@ -33,12 +33,7 @@
 
         } else if (message.action === 'wait') {
 
-            try {
-                seconds = Number(data);
-                seconds = seconds > 0 ? seconds : 1;
-            } catch (error) {
-                alert('Wait time provided was not valid.');
-            }
+            eveulateWaitTime(message.value);
         }
     }
 
@@ -52,40 +47,78 @@
 
     function evaluateMouseClick(event) {
 
-        if (characters.length > 0) {
-
-            console.log(characters);
-            characters = '';
-        }
-
         if (event.which !== 1) { return; }
         let element = event.target || event.srcElement;
 
-        chrome.storage.local.get(null, (result) => {
+        if (characters.length > 0) {
 
-            let step = getStep('click', result, element);
-            saveStep(step, result);
-        });
+            chrome.storage.local.get(null, (result) => {
+
+                let typeStep = getStep('type', result, null, characters);
+                characters = '';
+                let settings = {
+                    'settings': {
+                        'step_count': result.settings.step_count + 1,
+                        'file_name': result.settings.file_name,
+                        'value': ''
+                    }
+                };
+
+                chrome.storage.local.set(typeStep, () => {
+                    chrome.storage.local.set(settings, () => {
+
+                        result.settings.step_count = result.settings.step_count + 1;
+                        let clickStep = getStep('click', result, element);
+                        saveStep(clickStep, result);
+                    });
+                });
+            });
+
+        } else {
+
+            chrome.storage.local.get(null, (result) => {
+
+                let step = getStep('click', result, element);
+                saveStep(step, result);
+            });
+        }
     }
 
-    function getStep(stepType, result = null, element = null) {
+    function getStep(stepType, result = null, element = null, dataValue = '') {
 
+        let xpath;
+        let tagName;
         let description = 'Step ' + result.settings.step_count + ' - ';
-        let xpath = '';
 
         if (stepType == 'click') {
 
-            description = description + 'Click the ' + element.tagName + ' element';
             xpath = getXpath(element);
+            tagName = element.tagName;
+            description = description + 'Click the ' + tagName + ' element';
+
+        } else if (stepType == 'type') {
+
+            xpath = result['step_' + result.settings.step_count].locator;
+            tagName = result['step_' + result.settings.step_count].tag;
+            description = description + 'Type (' + dataValue.replace(/[^0-9A-za-z-.]/g, '') +
+                ') into the ' + tagName + ' textbox';
+
+        } else if (stepType == 'wait') {
+
+            xpath = '';
+            tagName = '';
+            description = description + 'Wait for ' + dataValue + ' second(s)';
         }
 
         let step = {};
 
         step['step_' + result.settings.step_count] = {
+            type: stepType,
             description: description,
+            tag: tagName,
             locator: xpath,
             time: getTimeStamp(),
-            data: ''
+            data: dataValue
         };
 
         console.log(description);
@@ -94,13 +127,15 @@
 
     function saveStep(step, result) {
 
-        chrome.storage.local.set(step);
-        chrome.storage.local.set({
-            'settings': {
-                'step_count': result.settings.step_count + 1,
-                'file_name': result.settings.file_name,
-                'value': ''
-            }
+        chrome.storage.local.set(step, () => {
+
+            chrome.storage.local.set({
+                'settings': {
+                    'step_count': result.settings.step_count + 1,
+                    'file_name': result.settings.file_name,
+                    'value': ''
+                }
+            });
         });
     }
 
@@ -133,6 +168,28 @@
 
         const date = new Date();
         return date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    }
+
+    function eveulateWaitTime(dataValue) {
+
+        let seconds;
+
+        try {
+
+            seconds = dataValue.replace(/[^0-9]/g, '');
+            seconds = seconds.length > 0? seconds : '1';
+
+        } catch (error) {
+
+            seconds = '1';
+            console.log('\n*** Wait time provided was not valid. ***\n');
+        }
+
+        chrome.storage.local.get(null, (result) => {
+
+            let step = getStep('wait', result, null, seconds);
+            saveStep(step, result);
+        });
     }
 
     recordHandler();
