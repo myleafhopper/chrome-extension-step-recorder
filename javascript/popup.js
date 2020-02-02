@@ -71,8 +71,16 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
     chrome.storage.local.get(null, (result) => {
 
+        let steps = {};
+
+        for (let i = 1; i < result.settings.step_count; i ++) {
+
+            let key = 'step_' + i;
+            steps[key] = result[key];
+        }
+
         const settings = {
-            url: 'data:application/json;base64,' + btoa(JSON.stringify(result)),
+            url: 'data:application/json;base64,' + btoa(JSON.stringify(steps)),
             filename: 'recorded_scripts/' + result.settings.file_name
         };
 
