@@ -34,6 +34,10 @@
         } else if (message.action === 'wait') {
 
             eveulateWaitTime(message.value);
+
+        } else if (message.action === 'remove-last-step') {
+
+            removeLastSavedStep();
         }
     }
 
@@ -177,7 +181,7 @@
         try {
 
             seconds = dataValue.replace(/[^0-9]/g, '');
-            seconds = seconds.length > 0? seconds : '1';
+            seconds = seconds.length > 0 ? seconds : '1';
 
         } catch (error) {
 
@@ -192,5 +196,26 @@
         });
     }
 
+    function removeLastSavedStep() {
+        
+        chrome.storage.local.get(null, (result) => {
+
+            let key = 'step_' + [result.settings.step_count - 1];
+            if (!result.hasOwnProperty(key)) { return; }
+
+            console.log('REMOVED: ' + result[key].description);
+
+            chrome.storage.local.remove(key, () => {
+                chrome.storage.local.set({
+                    'settings': {
+                        'step_count': result.settings.step_count - 1,
+                        'file_name': result.settings.file_name,
+                        'value': ''
+                    }
+                });
+            });
+        });
+    }
+    
     recordHandler();
 }

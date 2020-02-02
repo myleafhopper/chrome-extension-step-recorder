@@ -99,6 +99,13 @@ document.getElementById("wait").addEventListener("click", () => {
     });
 });
 
+document.getElementById("remove-last-step").addEventListener("click", () => {
+
+    port.postMessage({
+        action: "remove-last-step"
+    });
+});
+
 //-------------------------------------
 
 let data = '';
