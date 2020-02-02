@@ -43,20 +43,8 @@ document.getElementById("start-page-analysis").addEventListener("click", () => {
 
 document.getElementById("start-record").addEventListener("click", () => {
 
-    let file_name;
-
-    if (data.length > 0) {
-
-        file_name = data + '.json';
-        data = '';
-
-    } else {
-
-        let date = new Date();
-        let dateStamp = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
-        let timeStamp = date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
-        file_name = 'script (' + dateStamp + ') (' + timeStamp + ').json';
-    }
+    let file_name = data.length > 0 ? data : 'script ' + getDateTimeStamp();
+    data = '';
 
     port.postMessage({
         action: "start-record",
@@ -73,7 +61,7 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
         let steps = {};
 
-        for (let i = 1; i < result.settings.step_count; i ++) {
+        for (let i = 1; i < result.settings.step_count; i++) {
 
             let key = 'step_' + i;
             steps[key] = result[key];
@@ -87,6 +75,7 @@ document.getElementById("stop-record").addEventListener("click", () => {
         chrome.downloads.download(settings, () => {
 
             for (let key in result) {
+
                 console.log('\n', key + ': ' + result[key]);
                 chrome.storage.local.remove(key);
             }
@@ -97,60 +86,36 @@ document.getElementById("stop-record").addEventListener("click", () => {
 //-------------------------------------
 
 document.getElementById("wait-for-element").addEventListener("click", () => {
-
-    let name = data.includes(':') ? data.substring(lastIndexOf(':') + 1) : '';
-    let time = data.includes(':') ? data.substring(0, indexOf(':')) : data;
-    time = time.length > 0? time : '1';
-    data = '';
-
-    port.postMessage({
-        action: "wait-for-element",
-        name: name,
-        time: time,
-        text: ''
-    });
+    postEventMessage('wait-for-element', false, true);
 });
 
 document.getElementById("match-element-text").addEventListener("click", () => {
-
-    let text = data.includes(':') ? data.substring(0, indexOf(':')) : data;
-    let name = data.includes(':') ? data.substring(lastIndexOf(':') + 1) : '';
-    data = '';
-
-    port.postMessage({
-        action: "match-element-text",
-        name: name,
-        time: '',
-        text: text,
-    });
+    postEventMessage('match-element-text', true, false);
 });
 
 document.getElementById("wait").addEventListener("click", () => {
-
-    let time = data.length > 0? data : '1';
-    data = '';
-
-    port.postMessage({
-        action: "wait",
-        name: '',
-        time: time,
-        text: ''
-    });
+    postEventMessage('wait', false, true);
 });
 
 document.getElementById("remove-last-step").addEventListener("click", () => {
-
-    port.postMessage({
-        action: "remove-last-step"
-    });
+    postEventMessage('remove-last-step', false, false);
 });
 
 //-------------------------------------
 
 let data = '';
+let name = '';
 
 document.getElementById("data").addEventListener("change", (element) => {
     data = element.target.value;
+});
+
+document.getElementById("name").addEventListener("change", (element) => {
+    name = element.target.value;
+});
+
+document.getElementById("use-element-name").addEventListener("click", () => {
+    postEventMessage('use-element-name', false, false);
 });
 
 //-------------------------------------
@@ -158,3 +123,30 @@ document.getElementById("data").addEventListener("change", (element) => {
 document.getElementById("author").addEventListener("click", () => {
     chrome.tabs.create({ url: document.getElementById("author").getAttribute('href') });
 });
+
+//-------------------------------------
+
+function postEventMessage(action, useData, useTime) {
+
+    let message = {
+        action: action,
+        name: name
+    };
+
+    !useData ? message.text = '' : message.text = data;
+    !useTime ? message.time = '' :
+        data.length > 0 ? message.time = data : message.time = '1';
+
+    port.postMessage(message, () => {
+        name = '';
+        data = '';
+    });
+}
+
+function getDateTimeStamp() {
+
+    let date = new Date();
+    let dateStamp = (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getFullYear();
+    let timeStamp = date.getHours() + '-' + date.getMinutes() + '-' + date.getSeconds();
+    return '(' + dateStamp + ') (' + timeStamp + ')';
+}
