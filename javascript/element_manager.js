@@ -21,6 +21,15 @@
                 }
             });
 
+            chrome.storage.local.set({
+                'sub_step': {
+                    'action': '',
+                    'name': '',
+                    'time': '',
+                    'text': ''
+                }
+            });
+
             console.log(dash.repeat(30));
             console.log('Recording Started...');
             console.log(dash.repeat(30));
@@ -31,9 +40,17 @@
             console.log('Recording Stopped...');
             console.log(dash.repeat(30));
 
+        } else if (message.action === 'wait-for-element') {
+
+            setSubStepData(message);
+
+        } else if (message.action === 'match-element-text') {
+
+            setSubStepData(message);
+
         } else if (message.action === 'wait') {
 
-            eveulateWaitTime(message.value);
+            addWaitStep(message);
 
         } else if (message.action === 'remove-last-step') {
 
@@ -60,6 +77,7 @@
 
                 let typeStep = getStep('type', result, null, characters);
                 characters = '';
+
                 let settings = {
                     'settings': {
                         'step_count': result.settings.step_count + 1,
@@ -88,45 +106,68 @@
         }
     }
 
-    function getStep(stepType, result = null, element = null, dataValue = '') {
+    function getStep(stepType, result, element = null, characters = '') {
 
-        let xpath;
-        let tagName;
+        stepType = result.sub_step.action.length > 0 ? result.sub_step.action : stepType;
+        let key = 'step_' + result.settings.step_count;
+        let name = result.sub_step.name.length > 0 ? result.sub_step.name :
+            element !== null ? element.tagName : 'target';
+
+        let step = {};
+        step[key] = {
+            type: stepType,
+            description: '',
+            name: name,
+            tag: '',
+            xpath: '',
+            timeStamp: getTimeStamp(),
+            waitTime: '',
+            data: ''
+        };
+
+        if (stepType == 'click' || stepType == 'wait-for-element') {
+
+            step[key].xpath = getXpath(element);
+            step[key].tag = element.tagName;
+        }
+
         let description = 'Step ' + result.settings.step_count + ' - ';
 
         if (stepType == 'click') {
 
-            xpath = getXpath(element);
-            tagName = element.tagName;
-            description = description + 'Click the ' + tagName + ' element';
+            step[key].description = description + 'Click the ' + name + ' element';
+
+        } else if (stepType == 'wait-for-element') {
+
+            step[key].waitTime = result.sub_step.time;
+            step[key].description = description + 'Wait for ' + step[key].waitTime + ' second(s) for ' + name + ' to be visible';
+
+        } else if (stepType == 'match-element-text') {
+
+            step[key].data = result.sub_step.text;
+            let sanitizedText = step[key].data.replace(/[^0-9A-za-z-.]/g, '');
+            step[key].description = description + 'Verify element text matches (' + sanitizedText + ')';
 
         } else if (stepType == 'type') {
 
-            let key = 'step_' + (result.settings.step_count - 1);
-            xpath = result[key].locator;
-            tagName = result[key].tag;
-            description = description + 'Type (' + dataValue.replace(/[^0-9A-za-z-.]/g, '') +
-                ') into the ' + tagName + ' textbox';
+            let lastStepKey = 'step_' + (result.settings.step_count - 1);
+            step[key].xpath = result[lastStepKey].xpath;
+            step[key].tag = result[lastStepKey].tag;
+            step[key].data = characters;
+            characters = '';
+
+            let sanitizedText = step[key].data.replace(/[^0-9A-za-z-.]/g, '');
+            step[key].description = description + 'Type (' + sanitizedText + ') into the ' + name + ' textbox';
 
         } else if (stepType == 'wait') {
 
-            xpath = '';
-            tagName = '';
-            description = description + 'Wait for ' + dataValue + ' second(s)';
+            step[key].waitTime = result.sub_step.time;
+            step[key].description = description + 'Wait for ' + step[key].waitTime + ' second(s)';
         }
 
-        let step = {};
-
-        step['step_' + result.settings.step_count] = {
-            type: stepType,
-            description: description,
-            tag: tagName,
-            locator: xpath,
-            time: getTimeStamp(),
-            data: dataValue
-        };
-
-        console.log(description);
+        console.log(step[key].description);
+        let resetText = result.sub_step.text.length > 0;
+        resetSubStepData(resetText);
         return step;
     }
 
@@ -143,6 +184,77 @@
             });
         });
     }
+
+    function addWaitStep(message) {
+
+        chrome.storage.local.set({
+                'sub_step': {
+                    'action': message.action,
+                    'name': message.name,
+                    'time': message.time,
+                    'text': message.text
+                }
+            }, () => {
+
+                chrome.storage.local.get(null, (result) => {
+
+                    let step = getStep('wait', result);
+                    saveStep(step, result);
+                });
+            }
+        );
+    }
+
+    function removeLastSavedStep() {
+
+        chrome.storage.local.get(null, (result) => {
+
+            let key = 'step_' + [result.settings.step_count - 1];
+            if (!result.hasOwnProperty(key)) { return; }
+
+            console.log('REMOVED: ' + result[key].description);
+
+            chrome.storage.local.remove(key, () => {
+                chrome.storage.local.set({
+                    'settings': {
+                        'step_count': result.settings.step_count - 1,
+                        'file_name': result.settings.file_name,
+                        'value': ''
+                    }
+                });
+            });
+        });
+    }
+
+    function setSubStepData(message) {
+
+        chrome.storage.local.set({
+            'sub_step': {
+                'action': message.action,
+                'name': message.name,
+                'time': message.time,
+                'text': message.text
+            }
+        });
+    }
+
+    function resetSubStepData(resetText) {
+
+        chrome.storage.local.set({
+            'sub_step': {
+                'action': '',
+                'name': '',
+                'time': '',
+                'text': ''
+            }
+        });
+    }
+
+
+
+    // ---------------------------------------------------------------------------
+
+
 
     function getXpath(element) {
 
@@ -175,48 +287,5 @@
         return date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     }
 
-    function eveulateWaitTime(dataValue) {
-
-        let seconds;
-
-        try {
-
-            seconds = dataValue.replace(/[^0-9]/g, '');
-            seconds = seconds.length > 0 ? seconds : '1';
-
-        } catch (error) {
-
-            seconds = '1';
-            console.log('\n*** Wait time provided was not valid. ***\n');
-        }
-
-        chrome.storage.local.get(null, (result) => {
-
-            let step = getStep('wait', result, null, seconds);
-            saveStep(step, result);
-        });
-    }
-
-    function removeLastSavedStep() {
-
-        chrome.storage.local.get(null, (result) => {
-
-            let key = 'step_' + [result.settings.step_count - 1];
-            if (!result.hasOwnProperty(key)) { return; }
-
-            console.log('REMOVED: ' + result[key].description);
-
-            chrome.storage.local.remove(key, () => {
-                chrome.storage.local.set({
-                    'settings': {
-                        'step_count': result.settings.step_count - 1,
-                        'file_name': result.settings.file_name,
-                        'value': ''
-                    }
-                });
-            });
-        });
-    }
-    
     recordHandler();
 }

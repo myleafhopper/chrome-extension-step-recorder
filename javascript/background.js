@@ -24,13 +24,22 @@ function createContextMenuHandler(info, tab) {
 
 chrome.contextMenus.onClicked.addListener(createContextMenuHandler);
 
+chrome.runtime.onConnect.addListener(function (externalPort) {
+
+    externalPort.onDisconnect.addListener(function () {
+        console.log("(o) - Popup has been opened.");
+    });
+
+    console.log("(x) - Popup has been closed.");
+});
+
 //----------------------------------------------------------------------
 
 chrome.runtime.onConnect.addListener((port) => {
 
     port.onMessage.addListener((message) => {
 
-        let variable = message.action === 'start-page-analysis'? 'let ' : '';
+        let variable = message.action === 'start-page-analysis' ? 'let ' : '';
 
         chrome.tabs.executeScript({
             code: variable + 'message = ' + JSON.stringify(message)

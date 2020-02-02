@@ -88,14 +88,45 @@ document.getElementById("stop-record").addEventListener("click", () => {
 
 //-------------------------------------
 
+document.getElementById("wait-for-element").addEventListener("click", () => {
+
+    let name = data.includes(':') ? data.substring(lastIndexOf(':') + 1) : '';
+    let time = data.includes(':') ? data.substring(0, indexOf(':')) : data;
+    time = time.length > 0? time : '1';
+    data = '';
+
+    port.postMessage({
+        action: "wait-for-element",
+        name: name,
+        time: time,
+        text: ''
+    });
+});
+
+document.getElementById("match-element-text").addEventListener("click", () => {
+
+    let text = data.includes(':') ? data.substring(0, indexOf(':')) : data;
+    let name = data.includes(':') ? data.substring(lastIndexOf(':') + 1) : '';
+    data = '';
+
+    port.postMessage({
+        action: "match-element-text",
+        name: name,
+        time: '',
+        text: text,
+    });
+});
+
 document.getElementById("wait").addEventListener("click", () => {
 
-    let seconds = data;
+    let time = data.length > 0? data : '1';
     data = '';
 
     port.postMessage({
         action: "wait",
-        value: seconds
+        name: '',
+        time: time,
+        text: ''
     });
 });
 
