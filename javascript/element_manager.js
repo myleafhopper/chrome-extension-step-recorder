@@ -102,8 +102,9 @@
 
         } else if (stepType == 'type') {
 
-            xpath = result['step_' + result.settings.step_count].locator;
-            tagName = result['step_' + result.settings.step_count].tag;
+            let key = 'step_' + (result.settings.step_count - 1);
+            xpath = result[key].locator;
+            tagName = result[key].tag;
             description = description + 'Type (' + dataValue.replace(/[^0-9A-za-z-.]/g, '') +
                 ') into the ' + tagName + ' textbox';
 
@@ -197,7 +198,7 @@
     }
 
     function removeLastSavedStep() {
-        
+
         chrome.storage.local.get(null, (result) => {
 
             let key = 'step_' + [result.settings.step_count - 1];
